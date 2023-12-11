@@ -1,0 +1,197 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>k2</title><meta name="generator" content="MATLAB 9.10"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2023-12-11"><meta name="DC.source" content="k2.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; }
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+span.typesection { color:#A0522D }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><pre class="codeinput"><span class="comment">% KASRA HASSANI   9923107</span>
+
+<span class="comment">% Purpose of this code:</span>
+<span class="comment">% Creating a closed-loop transfer function using G(s) and PID</span>
+<span class="comment">% Printing individual coefficients of PID after tuning with G(s)</span>
+<span class="comment">% Kp, Kd, Ki</span>
+<span class="comment">% Plotting the Transfer Function with different Ta</span>
+
+<span class="comment">% Clearing and Closing Everything</span>
+clc; clear; close <span class="string">all</span>;
+<span class="comment">%-------------------------------------------</span>
+
+<span class="comment">% Making Transfer Function for G(s)</span>
+s = tf(<span class="string">'s'</span>);
+G = 1 / (s * (s + 1));
+<span class="comment">%-------------------------------------------</span>
+
+<span class="comment">% Tuning G(s) for PID</span>
+<span class="comment">% Other Options = P, PI, PD</span>
+C = pidtune(G, <span class="string">'PID'</span>);
+<span class="comment">%-------------------------------------------</span>
+
+<span class="comment">% Accessing the Individual Coefficients</span>
+Kp = get(C, <span class="string">'Kp'</span>);
+Kd = get(C, <span class="string">'Kd'</span>);
+Ki = get(C, <span class="string">'Ki'</span>);
+x = sprintf(<span class="string">'Kp = %f'</span>,Kp);
+disp(x);
+y = sprintf(<span class="string">'Kd = %f'</span>,Kd);
+disp(y);
+z = sprintf(<span class="string">'Ki = %f'</span>,Ki);
+disp(z);
+<span class="comment">%-------------------------------------------</span>
+
+<span class="comment">% Closed-Loop Transfer Function</span>
+T = feedback(C * G, 1);
+<span class="comment">%-------------------------------------------</span>
+
+
+
+
+<span class="comment">% Showing different Ta</span>
+Ta_min = 1; <span class="comment">% minimum Ta value</span>
+Ta_max = 10; <span class="comment">% maximum Ta value</span>
+Ta_step = 1; <span class="comment">% Ta increment</span>
+Ta = Ta_min:Ta_step:Ta_max; <span class="comment">% Ta vector</span>
+figure(<span class="string">'WindowState'</span>,<span class="string">'maximized'</span>); <span class="comment">% create a new figure</span>
+hold <span class="string">on</span>; <span class="comment">% hold the plot</span>
+<span class="keyword">for</span> i = 1:length(Ta)
+    C = pidtune(G, <span class="string">'PID'</span>,i);  <span class="comment">% C with different Ta</span>
+    T = feedback(C * G, 1);   <span class="comment">% The new Transfer Function</span>
+    step(T); <span class="comment">% plot the step response</span>
+<span class="keyword">end</span>
+hold <span class="string">off</span>; <span class="comment">% release the plot</span>
+legend(num2str(Ta')); <span class="comment">% add a legend with omega values</span>
+xlabel(<span class="string">'Time (s)'</span>); <span class="comment">% add x-axis label</span>
+ylabel(<span class="string">'Output'</span>); <span class="comment">% add y-axis label</span>
+title(<span class="string">'Step response of closed loop transfer function with different Ta'</span>); <span class="comment">% add title</span>
+<span class="comment">%-------------------------------------------</span>
+</pre><pre class="codeoutput">Kp = 2.109126
+Kd = 1.834131
+Ki = 0.538966
+</pre><img vspace="5" hspace="5" src="k2_01.png" alt=""> <p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2021a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+% KASRA HASSANI   9923107
+
+% Purpose of this code:
+% Creating a closed-loop transfer function using G(s) and PID
+% Printing individual coefficients of PID after tuning with G(s)
+% Kp, Kd, Ki
+% Plotting the Transfer Function with different Ta
+
+% Clearing and Closing Everything
+clc; clear; close all;
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+
+% Making Transfer Function for G(s)
+s = tf('s');
+G = 1 / (s * (s + 1));
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+
+% Tuning G(s) for PID
+% Other Options = P, PI, PD
+C = pidtune(G, 'PID');
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+
+% Accessing the Individual Coefficients
+Kp = get(C, 'Kp');
+Kd = get(C, 'Kd');
+Ki = get(C, 'Ki');
+x = sprintf('Kp = %f',Kp);
+disp(x);
+y = sprintf('Kd = %f',Kd);
+disp(y); 
+z = sprintf('Ki = %f',Ki);
+disp(z);
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+
+% Closed-Loop Transfer Function
+T = feedback(C * G, 1);
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+
+
+
+
+% Showing different Ta
+Ta_min = 1; % minimum Ta value
+Ta_max = 10; % maximum Ta value
+Ta_step = 1; % Ta increment
+Ta = Ta_min:Ta_step:Ta_max; % Ta vector
+figure('WindowState','maximized'); % create a new figure
+hold on; % hold the plot
+for i = 1:length(Ta)
+    C = pidtune(G, 'PID',i);  % C with different Ta
+    T = feedback(C * G, 1);   % The new Transfer Function
+    step(T); % plot the step response
+end
+hold off; % release the plot
+legend(num2str(Ta')); % add a legend with omega values
+xlabel('Time (s)'); % add x-axis label
+ylabel('Output'); % add y-axis label
+title('Step response of closed loop transfer function with different Ta'); % add title
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+
+
+
+##### SOURCE END #####
+--></body></html>
